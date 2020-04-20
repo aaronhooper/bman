@@ -4,14 +4,14 @@ from os.path import join
 import requests
 
 
-API_LOC = "https://words.bighugelabs.com/api/2"
 RES_FORMAT = "json"
 API_KEY_FILE = "api_key"
 
 DUMMY_RESULTS = {'liquid': ['swimming', 'limpid', 'melted', 'liquified', 'fluent', 'fluid', 'smooth', 'liquidness', 'liquidity', 'liquid state', 'consonant', 'fluid', 'state', 'state of matter'], 'great': ['outstanding', 'bang-up', 'bully', 'corking', 'cracking', 'dandy', 'groovy', 'keen', 'neat', 'nifty', 'peachy', 'slap-up', 'swell', 'smashing', 'capital', 'majuscule', 'enceinte', 'expectant', 'gravid', 'avid', 'big', 'eager', 'heavy', 'large', 'not bad', 'with child', 'zealous', 'achiever', 'succeeder', 'success', 'winner'], 'forest': ['wood', 'woods', 'woodland', 'timberland', 'timber', 'biome', 'botany', 'dry land', 'earth', 'flora', 'ground', 'land', 'solid ground', 'terra firma', 'vegetation', 'afforest', 'plant', 'set']}
 
 
-def _get_synonyms_from_api(word):
+def _get_synonyms_from_bighugelabs(word):
+    API_LOC = "https://words.bighugelabs.com/api/2"
     api_key = open(API_KEY_FILE, "r").readline().strip()
     parsed_api_loc = urlparse(API_LOC)
     full_req_path = join(parsed_api_loc.path, api_key, word, RES_FORMAT)
@@ -36,7 +36,7 @@ def _get_synonyms(*words, **options):
     results = {}
 
     for word in words:
-        results[word] = _get_synonyms_from_api(word)
+        results[word] = _get_synonyms_from_bighugelabs(word)
 
     return results
 
