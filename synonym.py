@@ -1,4 +1,5 @@
 import curses
+import json
 from os.path import join
 import sys
 import time
@@ -12,8 +13,7 @@ logging.basicConfig(filename="debug.log", level=logging.DEBUG)
 RES_FORMAT = "json"
 ENABLE_API = False
 API_KEY_FILE = "api_key"
-
-DUMMY_RESULTS = {'liquid': ['swimming', 'limpid', 'melted', 'liquified', 'fluent', 'fluid', 'smooth', 'liquidness', 'liquidity', 'liquid state', 'consonant', 'fluid', 'state', 'state of matter'], 'great': ['outstanding', 'bang-up', 'bully', 'corking', 'cracking', 'dandy', 'groovy', 'keen', 'neat', 'nifty', 'peachy', 'slap-up', 'swell', 'smashing', 'capital', 'majuscule', 'enceinte', 'expectant', 'gravid', 'avid', 'big', 'eager', 'heavy', 'large', 'not bad', 'with child', 'zealous', 'achiever', 'succeeder', 'success', 'winner'], 'forest': ['wood', 'woods', 'woodland', 'timberland', 'timber', 'biome', 'botany', 'dry land', 'earth', 'flora', 'ground', 'land', 'solid ground', 'terra firma', 'vegetation', 'afforest', 'plant', 'set']}
+TEST_DATA_FILE = "test_data.json"
 
 
 def _get_synonyms_from_bighugelabs(word):
@@ -38,7 +38,9 @@ def _get_synonyms_from_bighugelabs(word):
 
 def _get_synonyms(*words, **options):
     if not options['should_hit_api']:
-        return DUMMY_RESULTS
+        with open(TEST_DATA_FILE, 'r') as json_file:
+            test_data = json.load(json_file)
+        return test_data
 
     results = {}
 
