@@ -114,9 +114,6 @@ shortlist. Returns the shortlist."""
 
     # Get terminal size
     max_y, max_x = screen.getmaxyx()
-    
-    # Show cursor
-    curses.curs_set(1)
 
     screen.erase()
 
@@ -142,6 +139,8 @@ shortlist. Returns the shortlist."""
             # User options loop
             while True:
                 if not showing_help:
+                    curses.curs_set(1)
+
                     c = bottom_line.getch()
 
                     if c == ord('y'):
@@ -162,6 +161,7 @@ shortlist. Returns the shortlist."""
                         showing_help = True
 
                 elif showing_help:
+                    curses.curs_set(0)
                     c = help_window.getch()
 
                     if c == ord('?'):
