@@ -3,8 +3,10 @@ from os.path import join
 import sys
 import time
 from urllib.parse import urljoin, urlparse, urlunparse
-
 import requests
+
+import logging
+logging.basicConfig(filename="debug.log", level=logging.DEBUG)
 
 
 RES_FORMAT = "json"
@@ -51,6 +53,18 @@ def get_synonyms(*words):
     return _get_synonyms(*words, should_hit_api=ENABLE_API)
 
 
+def count_synonyms(synonyms):
+    """Return the total number of synonyms in a word to synonym
+dictionary."""
+    synonym_count = 0
+    for word in synonyms:
+        for synonym in word:
+            synonym_count += 1
+
+    return synonym_count
+
+
+
 def start_shortlisting(screen, synonyms):
     """Prompt the user to choose synonyms to be included in the
 shortlist. Returns the shortlist."""
@@ -67,7 +81,10 @@ shortlist. Returns the shortlist."""
     curses.curs_set(1)
 
     screen.erase()
+
     shortlist = {}
+    for key in synonyms.keys():
+        shortlist[key] = []
 
     for word in synonyms:
         top_line.erase()
@@ -88,7 +105,8 @@ shortlist. Returns the shortlist."""
                 c = bottom_line.getch()
 
                 if c == ord('y'):
-                    shortlist[word] = synonym
+                    shortlist[word] += [synonym]
+                    logging.debug(f"Synonym added: {synonym}")
                     break
                 elif c == ord('n'):
                     break
@@ -102,8 +120,17 @@ shortlist. Returns the shortlist."""
                 break
 
     curses.curs_set(0)
+    logging.debug(f"Shortlist: {shortlist}")
 
     return shortlist
+
+
+def format_with_commas(words):
+    output = ""
+    for word in words:
+        output += word + ", "
+
+    return output[:len(output) - 2]
 
 
 def main(screen):
@@ -120,14 +147,31 @@ def main(screen):
     screen.refresh()
     synonyms = get_synonyms(*words)
 
-    # Simulate latency for dummy results
-    time.sleep(2)
+    # # Simulate latency for dummy results
+    # time.sleep(2)
 
     # Begin shortlisting
     shortlist = start_shortlisting(screen, synonyms)
 
+    # Print summary
     screen.clear()
-    screen.addstr(0, 0, str(list(map(lambda x: x.upper(), shortlist.keys()))))
+    formatted_words = format_with_commas(shortlist.keys())
+    screen.addstr(0, 0, "SUMMARY")
+    screen.addstr(1, 0, "Given words: ")
+    screen.addstr(1, 13, formatted_words, curses.A_BOLD)
+    synonym_count = count_synonyms(synonyms)
+    shortlist_count = count_synonyms(shortlist)
+    screen.addstr(2, 0, f"Total synonyms shown: {synonym_count}")
+    screen.addstr(3, 0, f"Total shortlisted: {shortlist_count}")
+    screen.addstr(5, 0, f"SYNONYMS")
+
+    # Print synonyms
+    for index, (word, value) in enumerate(shortlist.items()):
+        screen.addstr(index + 6, 0, format_with_commas(shortlist[word]))
+
+    # Print dictionary
+    screen.addstr(10, 0, str(shortlist))
+
     screen.refresh()
 
     while True:
