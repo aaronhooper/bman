@@ -15,6 +15,7 @@ DUMMY_RESULTS = {'liquid': ['swimming', 'limpid', 'melted', 'liquified', 'fluent
 
 
 def _get_synonyms_from_bighugelabs(word):
+    """Returns a list of synonyms from the Big Thesaurus API."""
     API_LOC = "https://words.bighugelabs.com/api/2"
     api_key = open(API_KEY_FILE, "r").readline().strip()
     parsed_api_loc = urlparse(API_LOC)
@@ -46,11 +47,13 @@ def _get_synonyms(*words, **options):
 
 
 def get_synonyms(*words):
+    """Returns a dictionary with a words to synonyms mapping."""
     return _get_synonyms(*words, should_hit_api=ENABLE_API)
 
 
-def main(screen):
-    words = ["liquid", "great", "forest"]
+def start_shortlisting(screen, synonyms):
+    """Prompt the user to choose synonyms to be included in the
+shortlist. Returns the shortlist."""
 
     # Get terminal size
     max_y, max_x = screen.getmaxyx()
@@ -59,16 +62,6 @@ def main(screen):
     top_line = curses.newwin(1, max_x, 0, 0)
     middle_line = curses.newwin(1, max_x, round(max_y / 2), 0)
     bottom_line = curses.newwin(1, max_x, max_y - 1, 0)
-
-    # Hide cursor
-    curses.curs_set(0)
-
-    bottom_line.addstr(0, 0, "Fetching results ...")
-    bottom_line.refresh()
-    synonyms = get_synonyms(*words)
-
-    # Simulate latency
-    time.sleep(2)
 
     # Show cursor
     curses.curs_set(1)
@@ -89,6 +82,7 @@ def main(screen):
             middle_line.refresh()
             bottom_line.addstr(0, 0, "Shortlist word? (y/n/d/q/?) ")
 
+            # Main loop
             while True:
                 c = bottom_line.getch()
 
@@ -100,8 +94,33 @@ def main(screen):
                 elif c == ord('q'):
                     sys.exit(0)
 
+    curses.curs_set(0)
+
+    return shortlist
+
+
+def main(screen):
+    words = ["liquid", "great", "forest"]
+
+    # Get terminal size
+    max_y, max_x = screen.getmaxyx()
+
+    # Hide cursor
+    curses.curs_set(0)
+
+    # Fetch synonyms
+    screen.addstr(max_y - 1, 0, "Fetching results ...")
+    screen.refresh()
+    synonyms = get_synonyms(*words)
+
+    # Simulate latency for dummy results
+    time.sleep(2)
+
+    # Begin shortlisting
+    shortlist = start_shortlisting(screen, synonyms)
+
     screen.clear()
-    screen.addstr(0, 0, str(shortlist))
+    screen.addstr(0, 0, str(list(map(lambda x: x.upper(), shortlist.keys()))))
     screen.refresh()
 
     while True:
