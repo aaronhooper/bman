@@ -80,9 +80,10 @@ shortlist. Returns the shortlist."""
             middle_line.addstr(0, 2, f"==> ")
             middle_line.addstr(0, 7, synonym, curses.A_BOLD)
             middle_line.refresh()
-            bottom_line.addstr(0, 0, "Shortlist word? (y/n/d/q/?) ")
+            bottom_line.addstr(0, 0, "Shortlist word? (y/n/s/q/?) ")
+            should_skip_word = False
 
-            # Main loop
+            # User options loop
             while True:
                 c = bottom_line.getch()
 
@@ -91,8 +92,14 @@ shortlist. Returns the shortlist."""
                     break
                 elif c == ord('n'):
                     break
+                elif c == ord('s'):
+                    should_skip_word = True
+                    break
                 elif c == ord('q'):
                     sys.exit(0)
+
+            if should_skip_word:
+                break
 
     curses.curs_set(0)
 
