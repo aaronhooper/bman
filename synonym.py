@@ -128,6 +128,7 @@ shortlist. Returns the shortlist."""
 
 
 def format_with_commas(words):
+    """Separate the words in the list with commas."""
     output = ""
     for word in words:
         output += word + ", "
