@@ -66,6 +66,47 @@ dictionary."""
     return synonym_count
 
 
+def get_help_window(max_y, max_x):
+    help_options = {
+        "y": "yes",
+        "n": "no",
+        "s": "skip rest of synonyms for this word",
+        "q": "quit",
+        "?": "show/hide this window"
+    }
+
+    help_window = curses.newwin(max_y, max_x, 0, 0)
+    help_window.addstr(0, 0, "HELP")
+
+    for i, (key, value) in enumerate(help_options.items()):
+        help_window.addstr(i + 1, 0, key, curses.A_BOLD)
+        help_window.addstr(i + 1, 1, f" - {value}")
+
+    return help_window
+
+
+def get_word_line(word, max_y, max_x):
+    line = curses.newwin(1, max_x, 0, 0)
+    line.addstr(0, 0, "Synonym for")
+    line.addstr(0, 12, f"{word}", curses.A_BOLD)
+
+    return line
+
+
+def get_synonym_line(synonym, max_y, max_x):
+    line = curses.newwin(1, max_x, round(max_y / 2), 0)
+    line.addstr(0, 2, f"==> ")
+    line.addstr(0, 7, synonym, curses.A_BOLD)
+
+    return line
+
+
+def get_prompt_line(max_y, max_x):
+    line = curses.newwin(1, max_x, max_y - 1, 0)
+    line.addstr(0, 0, "Shortlist word? (y/n/s/q/?) ")
+
+    return line
+
 
 def start_shortlisting(screen, synonyms):
     """Prompt the user to choose synonyms to be included in the
@@ -74,11 +115,6 @@ shortlist. Returns the shortlist."""
     # Get terminal size
     max_y, max_x = screen.getmaxyx()
     
-    # Set up line windows
-    top_line = curses.newwin(1, max_x, 0, 0)
-    middle_line = curses.newwin(1, max_x, round(max_y / 2), 0)
-    bottom_line = curses.newwin(1, max_x, max_y - 1, 0)
-
     # Show cursor
     curses.curs_set(1)
 
@@ -89,34 +125,55 @@ shortlist. Returns the shortlist."""
         shortlist[key] = []
 
     for word in synonyms:
-        top_line.erase()
-        top_line.addstr(0, 0, "Synonym for")
-        top_line.addstr(0, 12, f"{word}", curses.A_BOLD)
+        if 'top_line' in locals():
+            top_line.erase()
+        top_line = get_word_line(word, max_y, max_x)
         top_line.refresh()
  
         for synonym in synonyms[word]:
-            middle_line.erase()
-            middle_line.addstr(0, 2, f"==> ")
-            middle_line.addstr(0, 7, synonym, curses.A_BOLD)
+            if 'middle_line' in locals():
+                middle_line.erase()
+            middle_line = get_synonym_line(synonym, max_y, max_x)
             middle_line.refresh()
-            bottom_line.addstr(0, 0, "Shortlist word? (y/n/s/q/?) ")
+            bottom_line = get_prompt_line(max_y, max_x)
             should_skip_word = False
+            showing_help = False
 
             # User options loop
             while True:
-                c = bottom_line.getch()
+                if not showing_help:
+                    c = bottom_line.getch()
 
-                if c == ord('y'):
-                    shortlist[word] += [synonym]
-                    logging.debug(f"Synonym added: {synonym}")
-                    break
-                elif c == ord('n'):
-                    break
-                elif c == ord('s'):
-                    should_skip_word = True
-                    break
-                elif c == ord('q'):
-                    sys.exit(0)
+                    if c == ord('y'):
+                        shortlist[word] += [synonym]
+                        logging.debug(f"Synonym added: {synonym}")
+                        break
+                    elif c == ord('n'):
+                        break
+                    elif c == ord('s'):
+                        should_skip_word = True
+                        break
+                    elif c == ord('q'):
+                        sys.exit(0)
+                    elif c == ord('?'):
+                        screen.erase()
+                        help_window = get_help_window(max_y, max_x)
+                        help_window.refresh()
+                        showing_help = True
+
+                elif showing_help:
+                    c = help_window.getch()
+
+                    if c == ord('?'):
+                        screen.erase()
+                        screen.refresh()
+                        showing_help = False
+                        bottom_line = get_prompt_line(max_y, max_x)
+                        middle_line = get_synonym_line(synonym, max_y, max_x)
+                        top_line = get_word_line(word, max_y, max_x)
+                        top_line.refresh()
+                        middle_line.refresh()
+                        bottom_line.refresh()
 
             if should_skip_word:
                 break
