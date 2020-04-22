@@ -114,6 +114,59 @@ shortlisting phase. Drawn at the bottom of the terminal."""
     return line
 
 
+def show_options_for_synonym(word, synonym, shortlist, screen):
+    """Prompt the user for a single synonym. Returns a tuple containing
+the shortlist with any applicable additions, and a boolean that equals
+True if the user chose to skip the word."""
+    max_y, max_x = screen.getmaxyx()
+
+    should_skip_word = False
+    showing_help = False
+
+    while True:
+        if not showing_help:
+            bottom_line = get_prompt_line(max_y, max_x)
+            middle_line = get_synonym_line(synonym, max_y, max_x)
+            top_line = get_word_line(word, max_y, max_x)
+            top_line.refresh()
+            middle_line.refresh()
+            bottom_line.refresh()
+
+            curses.curs_set(1)
+
+            c = bottom_line.getch()
+
+            if c == ord('y'):
+                shortlist[word] += [synonym]
+                logging.debug(f"Synonym added: {synonym}")
+                break
+            elif c == ord('n'):
+                break
+            elif c == ord('s'):
+                should_skip_word = True
+                break
+            elif c == ord('q'):
+                sys.exit(0)
+            elif c == ord('?'):
+                screen.erase()
+                showing_help = True
+
+        elif showing_help:
+            help_window = get_help_window(max_y, max_x)
+            help_window.refresh()
+
+            curses.curs_set(0)
+            c = help_window.getch()
+
+            if c == ord('?'):
+                screen.erase()
+                screen.refresh()
+                showing_help = False
+
+    return (shortlist, should_skip_word)
+
+
+
 def start_shortlisting(screen, synonyms):
     """Prompt the user to choose synonyms to be included in the
 shortlist. Returns the shortlist."""
@@ -138,49 +191,9 @@ shortlist. Returns the shortlist."""
                 middle_line.erase()
             middle_line = get_synonym_line(synonym, max_y, max_x)
             middle_line.refresh()
-            bottom_line = get_prompt_line(max_y, max_x)
 
-            should_skip_word = False
-            showing_help = False
-
-            # User options loop
-            while True:
-                if not showing_help:
-                    curses.curs_set(1)
-
-                    c = bottom_line.getch()
-
-                    if c == ord('y'):
-                        shortlist[word] += [synonym]
-                        logging.debug(f"Synonym added: {synonym}")
-                        break
-                    elif c == ord('n'):
-                        break
-                    elif c == ord('s'):
-                        should_skip_word = True
-                        break
-                    elif c == ord('q'):
-                        sys.exit(0)
-                    elif c == ord('?'):
-                        screen.erase()
-                        help_window = get_help_window(max_y, max_x)
-                        help_window.refresh()
-                        showing_help = True
-
-                elif showing_help:
-                    curses.curs_set(0)
-                    c = help_window.getch()
-
-                    if c == ord('?'):
-                        screen.erase()
-                        screen.refresh()
-                        showing_help = False
-                        bottom_line = get_prompt_line(max_y, max_x)
-                        middle_line = get_synonym_line(synonym, max_y, max_x)
-                        top_line = get_word_line(word, max_y, max_x)
-                        top_line.refresh()
-                        middle_line.refresh()
-                        bottom_line.refresh()
+            shortlist, should_skip_word = show_options_for_synonym(word, synonym,
+                                                                   shortlist, screen)
 
             if should_skip_word:
                 break
