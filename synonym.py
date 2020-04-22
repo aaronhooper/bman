@@ -86,6 +86,8 @@ def get_help_window(max_y, max_x):
 
 
 def get_word_line(word, max_y, max_x):
+    """Return the line displaying the given word in bold drawn at the top
+of the terminal."""
     line = curses.newwin(1, max_x, 0, 0)
     line.addstr(0, 0, "Synonym for")
     line.addstr(0, 12, f"{word}", curses.A_BOLD)
@@ -104,6 +106,8 @@ first third of the terminal."""
 
 
 def get_prompt_line(max_y, max_x):
+    """Return the line prompting the user for the various options in the
+shortlisting phase. Drawn at the bottom of the terminal."""
     line = curses.newwin(1, max_x, max_y - 1, 0)
     line.addstr(0, 0, "Shortlist word? (y/n/s/q/?) ")
 
@@ -135,6 +139,7 @@ shortlist. Returns the shortlist."""
             middle_line = get_synonym_line(synonym, max_y, max_x)
             middle_line.refresh()
             bottom_line = get_prompt_line(max_y, max_x)
+
             should_skip_word = False
             showing_help = False
 
