@@ -94,7 +94,9 @@ def get_word_line(word, max_y, max_x):
 
 
 def get_synonym_line(synonym, max_y, max_x):
-    line = curses.newwin(1, max_x, round(max_y / 2), 0)
+    """Return the line displaying the given synonym in bold. Drawn at the
+first third of the terminal."""
+    line = curses.newwin(1, max_x, round(max_y / 3), 0)
     line.addstr(0, 2, f"==> ")
     line.addstr(0, 7, synonym, curses.A_BOLD)
 
