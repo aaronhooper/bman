@@ -10,7 +10,6 @@ import logging
 logging.basicConfig(filename="debug.log", level=logging.DEBUG)
 
 
-RES_FORMAT = "json"
 ENABLE_API = False
 API_KEY_FILE = "api_key"
 TEST_DATA_FILE = "test_data.json"
