@@ -56,7 +56,6 @@ def count_synonyms(synonyms):
     for key, value in synonyms.items():
         for synonym in value:
             synonym_count += 1
-            logging.debug(f"Counted '{synonym}' in '{key}', current total: {synonym_count}")
 
     return synonym_count
 
