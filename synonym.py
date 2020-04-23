@@ -35,8 +35,9 @@ def _get_synonyms_from_bighugelabs(word):
     return synonyms
 
 
-def _get_synonyms(*words, **options):
-    if not options['should_hit_api']:
+def get_synonyms(*words):
+    """Get synonyms of words."""
+    if not ENABLE_API:
         with open(TEST_DATA_FILE, 'r') as json_file:
             test_data = json.load(json_file)
         return test_data
@@ -47,11 +48,6 @@ def _get_synonyms(*words, **options):
         results[word] = _get_synonyms_from_bighugelabs(word)
 
     return results
-
-
-def get_synonyms(*words):
-    """Returns a dictionary with a words to synonyms mapping."""
-    return _get_synonyms(*words, should_hit_api=ENABLE_API)
 
 
 def count_synonyms(synonyms):
