@@ -255,6 +255,15 @@ def main(screen):
     # Print dictionary
     screen.addstr(10, 0, str(shortlist))
 
+    # Display saving options
+    screen.addstr(max_y - 5, 0, "Choose option:")
+    screen.addstr(max_y - 4, 0, "1", curses.A_BOLD)
+    screen.addstr(max_y - 4, 1, " - Save to text file")
+    screen.addstr(max_y - 3, 0, "2", curses.A_BOLD)
+    screen.addstr(max_y - 3, 1, " - Save to JSON")
+    screen.addstr(max_y - 2, 0, "3", curses.A_BOLD)
+    screen.addstr(max_y - 2, 1, " - Quit without saving")
+
     screen.refresh()
 
     while True:
