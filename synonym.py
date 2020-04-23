@@ -254,7 +254,10 @@ def text_dump(synonyms, fp):
 
 
 def main(screen):
-    words = ["liquid", "great", "forest"]
+    #words = ["liquid", "great", "forest"]
+
+    # Get words
+    words = sys.argv[1:]
 
     # Get terminal size
     max_y, max_x = screen.getmaxyx()
@@ -293,4 +296,8 @@ def main(screen):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print(f"Usage: ./{sys.argv[0]} <word> ...")
+        sys.exit(1)
+
     curses.wrapper(main)
