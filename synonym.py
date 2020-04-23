@@ -214,6 +214,14 @@ def format_with_commas(words):
     return output[:len(output) - 2]
 
 
+def text_dump(synonyms, fp):
+    for key, value in synonyms.items():
+        fp.write(key.upper() + "\n")
+        for synonym in value:
+            fp.write(synonym + "\n")
+        fp.write("\n")
+
+
 def main(screen):
     words = ["liquid", "great", "forest"]
 
@@ -261,16 +269,21 @@ def main(screen):
     screen.addstr(max_y - 3, 1, " - Save to JSON")
     screen.addstr(max_y - 2, 0, "3", curses.A_BOLD)
     screen.addstr(max_y - 2, 1, " - Quit without saving")
-
     screen.refresh()
 
     while True:
         c = screen.getch()
 
-        if c == ord('2'):
+        if c == ord('1'):
+            with open("saved-synonyms.txt", "w") as fp:
+                text_dump(shortlist, fp)
+            break
+        elif c == ord('2'):
             with open("saved-synonyms.json", "w") as fp:
                 json.dump(shortlist, fp)
-                break
+            break
+        elif c == ord('3'):
+            break
 
 
 if __name__ == "__main__":
