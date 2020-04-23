@@ -201,24 +201,24 @@ def show_summary(synonyms, shortlist, screen):
 
     max_y, max_x = screen.getmaxyx()
     screen.clear()
+
     formatted_words = format_with_commas(shortlist.keys())
     screen.addstr(0, 0, "SUMMARY")
-    screen.addstr(1, 0, "Given words: ")
-    screen.addstr(1, 13, formatted_words, curses.A_BOLD)
     synonym_count = count_synonyms(synonyms)
     shortlist_count = count_synonyms(shortlist)
     logging.debug(f"Synonyms: {synonyms}")
     logging.debug(f"Shortlist: {shortlist}")
-    screen.addstr(2, 0, f"Total synonyms received: {synonym_count}")
-    screen.addstr(3, 0, f"Total shortlisted: {shortlist_count}")
-    screen.addstr(5, 0, f"CHOSEN WORDS")
+    screen.addstr(1, 0, f"Total synonyms received: {synonym_count}")
+    screen.addstr(2, 0, f"Total shortlisted: {shortlist_count}")
 
-    # Print synonyms
+    screen.addstr(4, 0, "WORDS")
+    screen.addstr(5, 0, formatted_words, curses.A_BOLD)
+
+    screen.addstr(7, 0, f"SYNONYMS")
     for index, (word, value) in enumerate(shortlist.items()):
-        screen.addstr(index + 6, 0,
+        screen.addstr(index + 8, 0,
                       format_with_commas(shortlist[word]), curses.A_BOLD)
 
-    # Display saving options
     screen.addstr(max_y - 5, 0, "Choose option:")
     screen.addstr(max_y - 4, 0, "1", curses.A_BOLD)
     screen.addstr(max_y - 4, 1, " - Save to text file")
