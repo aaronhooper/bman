@@ -246,7 +246,7 @@ def main(screen):
     logging.debug(f"Shortlist: {shortlist}")
     screen.addstr(2, 0, f"Total synonyms shown: {synonym_count}")
     screen.addstr(3, 0, f"Total shortlisted: {shortlist_count}")
-    screen.addstr(5, 0, f"SYNONYMS")
+    screen.addstr(5, 0, f"CHOSEN WORDS")
 
     # Print synonyms
     for index, (word, value) in enumerate(shortlist.items()):
