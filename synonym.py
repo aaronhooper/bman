@@ -6,13 +6,10 @@ import time
 from urllib.parse import urljoin, urlparse, urlunparse
 import requests
 
+from settings import ENABLE_API, API_KEY_FILE, TEST_DATA_FILE
+
 import logging
 logging.basicConfig(filename="debug.log", level=logging.DEBUG)
-
-
-ENABLE_API = False
-API_KEY_FILE = "api_key"
-TEST_DATA_FILE = "test_data.json"
 
 
 def _get_synonyms_from_bighugelabs(word):
@@ -162,7 +159,6 @@ def show_options_for_synonym(word, synonym, shortlist, screen):
                 showing_help = False
 
     return (shortlist, should_skip_word)
-
 
 
 def start_shortlisting(screen, synonyms):
