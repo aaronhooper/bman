@@ -201,8 +201,42 @@ def start_shortlisting(screen, synonyms):
     return shortlist
 
 
+def show_summary(synonyms, shortlist, screen):
+    """Show a summary of the chosen words and synonyms."""
+
+    max_y, max_x = screen.getmaxyx()
+    screen.clear()
+    formatted_words = format_with_commas(shortlist.keys())
+    screen.addstr(0, 0, "SUMMARY")
+    screen.addstr(1, 0, "Given words: ")
+    screen.addstr(1, 13, formatted_words, curses.A_BOLD)
+    synonym_count = count_synonyms(synonyms)
+    shortlist_count = count_synonyms(shortlist)
+    logging.debug(f"Synonyms: {synonyms}")
+    logging.debug(f"Shortlist: {shortlist}")
+    screen.addstr(2, 0, f"Total synonyms received: {synonym_count}")
+    screen.addstr(3, 0, f"Total shortlisted: {shortlist_count}")
+    screen.addstr(5, 0, f"CHOSEN WORDS")
+
+    # Print synonyms
+    for index, (word, value) in enumerate(shortlist.items()):
+        screen.addstr(index + 6, 0,
+                      format_with_commas(shortlist[word]), curses.A_BOLD)
+
+    # Display saving options
+    screen.addstr(max_y - 5, 0, "Choose option:")
+    screen.addstr(max_y - 4, 0, "1", curses.A_BOLD)
+    screen.addstr(max_y - 4, 1, " - Save to text file")
+    screen.addstr(max_y - 3, 0, "2", curses.A_BOLD)
+    screen.addstr(max_y - 3, 1, " - Save to JSON")
+    screen.addstr(max_y - 2, 0, "3", curses.A_BOLD)
+    screen.addstr(max_y - 2, 1, " - Quit without saving")
+    screen.refresh()
+
+
 def format_with_commas(words):
     """Format the list of words with commas."""
+
     output = ""
     for word in words:
         output += word + ", "
@@ -239,35 +273,10 @@ def main(screen):
     # Begin shortlisting
     shortlist = start_shortlisting(screen, synonyms)
 
-    # Print summary
-    screen.clear()
-    formatted_words = format_with_commas(shortlist.keys())
-    screen.addstr(0, 0, "SUMMARY")
-    screen.addstr(1, 0, "Given words: ")
-    screen.addstr(1, 13, formatted_words, curses.A_BOLD)
-    synonym_count = count_synonyms(synonyms)
-    shortlist_count = count_synonyms(shortlist)
-    logging.debug(f"Synonyms: {synonyms}")
-    logging.debug(f"Shortlist: {shortlist}")
-    screen.addstr(2, 0, f"Total synonyms received: {synonym_count}")
-    screen.addstr(3, 0, f"Total shortlisted: {shortlist_count}")
-    screen.addstr(5, 0, f"CHOSEN WORDS")
+    # Show summary page
+    show_summary(synonyms, shortlist, screen)
 
-    # Print synonyms
-    for index, (word, value) in enumerate(shortlist.items()):
-        screen.addstr(index + 6, 0,
-                      format_with_commas(shortlist[word]), curses.A_BOLD)
-
-    # Display saving options
-    screen.addstr(max_y - 5, 0, "Choose option:")
-    screen.addstr(max_y - 4, 0, "1", curses.A_BOLD)
-    screen.addstr(max_y - 4, 1, " - Save to text file")
-    screen.addstr(max_y - 3, 0, "2", curses.A_BOLD)
-    screen.addstr(max_y - 3, 1, " - Save to JSON")
-    screen.addstr(max_y - 2, 0, "3", curses.A_BOLD)
-    screen.addstr(max_y - 2, 1, " - Quit without saving")
-    screen.refresh()
-
+    # Capture file save options
     while True:
         c = screen.getch()
 
