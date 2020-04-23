@@ -16,7 +16,7 @@ TEST_DATA_FILE = "test_data.json"
 
 
 def _get_synonyms_from_bighugelabs(word):
-    """Returns a list of synonyms from the Big Thesaurus API."""
+    """Get synonyms of a word from Big Thesaurus."""
     API_LOC = "https://words.bighugelabs.com/api/2"
     api_key = open(API_KEY_FILE, "r").readline().strip()
     parsed_api_loc = urlparse(API_LOC)
@@ -36,7 +36,7 @@ def _get_synonyms_from_bighugelabs(word):
 
 
 def get_synonyms(*words):
-    """Get synonyms of words."""
+    """Get synonyms of one or more words."""
     if not ENABLE_API:
         with open(TEST_DATA_FILE, 'r') as json_file:
             test_data = json.load(json_file)
@@ -51,8 +51,7 @@ def get_synonyms(*words):
 
 
 def count_synonyms(synonyms):
-    """Return the total number of synonyms in a word to synonym
-dictionary."""
+    """Count the synonyms in the dictionary."""
     synonym_count = 0
     for key, value in synonyms.items():
         for synonym in value:
@@ -63,6 +62,7 @@ dictionary."""
 
 
 def get_help_window(max_y, max_x):
+    """Create the help window."""
     help_options = {
         "y": "yes",
         "n": "no",
@@ -82,8 +82,7 @@ def get_help_window(max_y, max_x):
 
 
 def get_word_line(word, max_y, max_x):
-    """Return the line displaying the given word in bold drawn at the top
-of the terminal."""
+    """Create the current word line."""
     line = curses.newwin(1, max_x, 0, 0)
     line.addstr(0, 0, "Synonym for")
     line.addstr(0, 12, f"{word}", curses.A_BOLD)
@@ -92,8 +91,7 @@ of the terminal."""
 
 
 def get_synonym_line(synonym, max_y, max_x):
-    """Return the line displaying the given synonym in bold. Drawn at the
-first third of the terminal."""
+    """Create the synonym line."""
     line = curses.newwin(1, max_x, round(max_y / 3), 0)
     line.addstr(0, 2, f"==> ")
     line.addstr(0, 7, synonym, curses.A_BOLD)
@@ -102,8 +100,7 @@ first third of the terminal."""
 
 
 def get_prompt_line(max_y, max_x):
-    """Return the line prompting the user for the various options in the
-shortlisting phase. Drawn at the bottom of the terminal."""
+    """Create the question prompt."""
     line = curses.newwin(1, max_x, max_y - 1, 0)
     line.addstr(0, 0, "Shortlist word? (y/n/s/q/?) ")
 
@@ -111,9 +108,7 @@ shortlisting phase. Drawn at the bottom of the terminal."""
 
 
 def show_options_for_synonym(word, synonym, shortlist, screen):
-    """Prompt the user for a single synonym. Returns a tuple containing
-the shortlist with any applicable additions, and a boolean that equals
-True if the user chose to skip the word."""
+    """Prompt the user for a single synonym."""
     max_y, max_x = screen.getmaxyx()
 
     should_skip_word = False
@@ -164,8 +159,7 @@ True if the user chose to skip the word."""
 
 
 def start_shortlisting(screen, synonyms):
-    """Prompt the user to choose synonyms to be included in the
-shortlist. Returns the shortlist."""
+    """Prompt the user to choose synonyms."""
 
     # Get terminal size
     max_y, max_x = screen.getmaxyx()
@@ -201,7 +195,7 @@ shortlist. Returns the shortlist."""
 
 
 def format_with_commas(words):
-    """Separate the words in the list with commas."""
+    """Format the list of words with commas."""
     output = ""
     for word in words:
         output += word + ", "
@@ -210,6 +204,7 @@ def format_with_commas(words):
 
 
 def text_dump(synonyms, fp):
+    """Save the synonyms to a text file."""
     for key, value in synonyms.items():
         fp.write(key.upper() + "\n")
         for synonym in value:
