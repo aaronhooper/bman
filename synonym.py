@@ -250,7 +250,8 @@ def main(screen):
 
     # Print synonyms
     for index, (word, value) in enumerate(shortlist.items()):
-        screen.addstr(index + 6, 0, format_with_commas(shortlist[word]))
+        screen.addstr(index + 6, 0,
+                      format_with_commas(shortlist[word]), curses.A_BOLD)
 
     # Display saving options
     screen.addstr(max_y - 5, 0, "Choose option:")
@@ -264,7 +265,12 @@ def main(screen):
     screen.refresh()
 
     while True:
-        continue
+        c = screen.getch()
+
+        if c == ord('2'):
+            with open("saved-synonyms.json", "w") as fp:
+                json.dump(shortlist, fp)
+                break
 
 
 if __name__ == "__main__":
