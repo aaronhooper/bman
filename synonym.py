@@ -244,7 +244,7 @@ def main(screen):
     shortlist_count = count_synonyms(shortlist)
     logging.debug(f"Synonyms: {synonyms}")
     logging.debug(f"Shortlist: {shortlist}")
-    screen.addstr(2, 0, f"Total synonyms shown: {synonym_count}")
+    screen.addstr(2, 0, f"Total synonyms received: {synonym_count}")
     screen.addstr(3, 0, f"Total shortlisted: {shortlist_count}")
     screen.addstr(5, 0, f"CHOSEN WORDS")
 
