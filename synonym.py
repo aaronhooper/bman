@@ -252,9 +252,6 @@ def main(screen):
     for index, (word, value) in enumerate(shortlist.items()):
         screen.addstr(index + 6, 0, format_with_commas(shortlist[word]))
 
-    # Print dictionary
-    screen.addstr(10, 0, str(shortlist))
-
     # Display saving options
     screen.addstr(max_y - 5, 0, "Choose option:")
     screen.addstr(max_y - 4, 0, "1", curses.A_BOLD)
