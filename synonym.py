@@ -59,9 +59,10 @@ def count_synonyms(synonyms):
     """Return the total number of synonyms in a word to synonym
 dictionary."""
     synonym_count = 0
-    for word in synonyms:
-        for synonym in word:
+    for key, value in synonyms.items():
+        for synonym in value:
             synonym_count += 1
+            logging.debug(f"Counted '{synonym}' in '{key}', current total: {synonym_count}")
 
     return synonym_count
 
@@ -241,6 +242,8 @@ def main(screen):
     screen.addstr(1, 13, formatted_words, curses.A_BOLD)
     synonym_count = count_synonyms(synonyms)
     shortlist_count = count_synonyms(shortlist)
+    logging.debug(f"Synonyms: {synonyms}")
+    logging.debug(f"Shortlist: {shortlist}")
     screen.addstr(2, 0, f"Total synonyms shown: {synonym_count}")
     screen.addstr(3, 0, f"Total shortlisted: {shortlist_count}")
     screen.addstr(5, 0, f"SYNONYMS")
