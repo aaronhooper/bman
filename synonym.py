@@ -17,6 +17,7 @@ TEST_DATA_FILE = "test_data.json"
 
 def _get_synonyms_from_bighugelabs(word):
     """Get synonyms of a word from Big Thesaurus."""
+
     API_LOC = "https://words.bighugelabs.com/api/2"
     api_key = open(API_KEY_FILE, "r").readline().strip()
     parsed_api_loc = urlparse(API_LOC)
@@ -37,6 +38,7 @@ def _get_synonyms_from_bighugelabs(word):
 
 def get_synonyms(*words):
     """Get synonyms of one or more words."""
+
     if not ENABLE_API:
         with open(TEST_DATA_FILE, 'r') as json_file:
             test_data = json.load(json_file)
@@ -52,6 +54,7 @@ def get_synonyms(*words):
 
 def count_synonyms(synonyms):
     """Count the synonyms in the dictionary."""
+
     synonym_count = 0
     for key, value in synonyms.items():
         for synonym in value:
@@ -63,6 +66,7 @@ def count_synonyms(synonyms):
 
 def get_help_window(max_y, max_x):
     """Create the help window."""
+
     help_options = {
         "y": "yes",
         "n": "no",
@@ -83,6 +87,7 @@ def get_help_window(max_y, max_x):
 
 def get_word_line(word, max_y, max_x):
     """Create the current word line."""
+
     line = curses.newwin(1, max_x, 0, 0)
     line.addstr(0, 0, "Synonym for")
     line.addstr(0, 12, f"{word}", curses.A_BOLD)
@@ -92,6 +97,7 @@ def get_word_line(word, max_y, max_x):
 
 def get_synonym_line(synonym, max_y, max_x):
     """Create the synonym line."""
+
     line = curses.newwin(1, max_x, round(max_y / 3), 0)
     line.addstr(0, 2, f"==> ")
     line.addstr(0, 7, synonym, curses.A_BOLD)
@@ -101,6 +107,7 @@ def get_synonym_line(synonym, max_y, max_x):
 
 def get_prompt_line(max_y, max_x):
     """Create the question prompt."""
+
     line = curses.newwin(1, max_x, max_y - 1, 0)
     line.addstr(0, 0, "Shortlist word? (y/n/s/q/?) ")
 
@@ -109,8 +116,8 @@ def get_prompt_line(max_y, max_x):
 
 def show_options_for_synonym(word, synonym, shortlist, screen):
     """Prompt the user for a single synonym."""
-    max_y, max_x = screen.getmaxyx()
 
+    max_y, max_x = screen.getmaxyx()
     should_skip_word = False
     showing_help = False
 
