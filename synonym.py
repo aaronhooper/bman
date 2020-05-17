@@ -142,13 +142,19 @@ def get_synonyms_from_bighugelabs(word):
     full_req_path = join(parsed_api_loc.path, api_key, word, RES_FORMAT)
     parsed_url = parsed_api_loc._replace(path=full_req_path)
     req_url = urlunparse(parsed_url)
-    res = requests.get(req_url)
-    json_dict = res.json()
     synonyms = []
 
-    for word_group in json_dict:
-        if 'syn' in json_dict[word_group]:
-            synonyms += json_dict[word_group]['syn']
+    try:
+        res = requests.get(req_url)
+        res.raise_for_status()
+        json_dict = res.json()
+
+        for word_group in json_dict:
+            if 'syn' in json_dict[word_group]:
+                synonyms += json_dict[word_group]['syn']
+
+    except requests.exceptions.HTTPError as e:
+        logging.info(f"An error occured while retrieving synonyms for '{word}': {e}")
 
     return synonyms
 
