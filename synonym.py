@@ -21,20 +21,20 @@ def main(screen):
     synonyms = get_synonyms(*words)
     shortlist = start_shortlisting(screen, synonyms)
     show_summary(synonyms, shortlist, screen)
+    FILENAME_PART = "saved-synonyms"
 
     while True:
         c = screen.getch()
 
         if c == ord('1'):
-            with open("saved-synonyms.txt", "w") as fp:
-                text_dump(shortlist, fp)
-            break
+            file_ext = "txt"
         elif c == ord('2'):
-            with open("saved-synonyms.json", "w") as fp:
-                json.dump(shortlist, fp)
-            break
+            file_ext = "json"
         elif c == ord('3'):
             break
+
+        dump_file(shortlist, FILENAME_PART, file_ext)
+        break
 
 
 def get_synonyms(*words):
@@ -120,6 +120,16 @@ def show_summary(synonyms, shortlist, screen):
     screen.addstr(max_y - 2, 0, "3", curses.A_BOLD)
     screen.addstr(max_y - 2, 1, " - Quit without saving")
     screen.refresh()
+
+
+def dump_file(shortlist, filename, file_ext):
+    """Save the synonyms to a file with the format of file_ext."""
+
+    with open(filename + "." + file_ext, "w") as fp:
+        if file_ext == "json":
+            json.dump(shortlist, fp)
+        elif file_ext == "txt":
+            text_dump(shortlist, fp)
 
 
 def text_dump(synonyms, fp):
