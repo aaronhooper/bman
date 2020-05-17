@@ -2,11 +2,10 @@ import curses
 import json
 from os.path import join
 import sys
-import time
-from urllib.parse import urljoin, urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 import requests
 
-from settings import ENABLE_API, API_KEY_FILE, TEST_DATA_FILE
+from settings import ENABLE_API, API_KEY_FILE, TEST_DATA_FILE, RES_FORMAT
 
 import logging
 logging.basicConfig(filename="debug.log", level=logging.DEBUG)
