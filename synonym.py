@@ -246,7 +246,7 @@ def count_synonyms(synonyms):
 def get_help_window(max_y, max_x):
     """Create the help window."""
 
-    help_options = {
+    HELP_OPTIONS = {
         "y": "yes",
         "n": "no",
         "s": "skip rest of synonyms for this word",
@@ -257,7 +257,7 @@ def get_help_window(max_y, max_x):
     help_window = curses.newwin(max_y, max_x, 0, 0)
     help_window.addstr(0, 0, "HELP")
 
-    for i, (key, value) in enumerate(help_options.items()):
+    for i, (key, value) in enumerate(HELP_OPTIONS.items()):
         help_window.addstr(i + 1, 0, key, curses.A_BOLD)
         help_window.addstr(i + 1, 1, f" - {value}")
 
